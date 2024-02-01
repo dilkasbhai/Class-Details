@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(11, 50px);
+            gap: 2px;
+            background-color: #fff;
+            border: 2px solid #333;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('board');
+            const cells = [];
+
+            // Create the game board
+            for (let i = 0; i < 11; i++) {
+                for (let j = 0; j < 11; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    board.appendChild(cell);
+                    cells.push(cell);
+                }
+            }
+
+            // Add players to their initial positions
+            const players = [
+                { position: 0, color: 'red' },
+                { position: 0, color: 'blue' }
+            ];
+
+            function drawPlayers() {
+                cells.forEach(cell => cell.innerHTML = '');
+
+                players.forEach((player, index) => {
+                    const playerDiv = document.createElement('div');
+                    playerDiv.classList.add('player');
+                    playerDiv.style.backgroundColor = player.color;
+                    cells[player.position].appendChild(playerDiv);
+                });
+            }
+
+            function rollDice() {
+                return Math.floor(Math.random() * 6) + 1;
+            }
+
+            function movePlayer(playerIndex, steps) {
+                players[playerIndex].position += steps;
+                if (players[playerIndex].position >= 100) {
+                    alert(`${players[playerIndex].color} player wins!`);
+                    resetGame();
+                }
+            }
+
+            function resetGame() {
+                players.forEach(player => {
+                    player.position = 0;
+                });
+                drawPlayers();
+            }
+
+            function playRound(playerIndex) {
+                const steps = rollDice();
+                movePlayer(playerIndex, steps);
+                drawPlayers();
+            }
+
+            drawPlayers(); // Initial draw
+
+            document.addEventListener('click', () => {
+                playRound(0); // Human player's turn
+                playRound(1); // Computer player's turn
+            });
+        });
+    </script>
+</body>
+</html>

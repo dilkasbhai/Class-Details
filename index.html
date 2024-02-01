@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepal Banepa Polytechnique Institute Student Profiles</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .profile {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border: 3px solid #000;
+            border-radius: 4px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .profile h3 {
+            margin-top: 0;
+            color: #fff;
+            background-color: #2196F3;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .hidden-data {
+            display: none;
+        }
+
+        #profile-image-preview {
+            width: 100px;
+            height: 100px;
+            margin: 10px 0;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #4caf50;
+        }
+
+        #profile-image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Nepal Banepa Polytechnique Institute Student Profiles</h1>
+
+    <form id="profile-form">
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" name="fullName" placeholder="Enter Full Name" required>
+
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+
+        <label for="year">Year:</label>
+        <select id="year" name="year" required>
+            <option value="I">I</option>
+            <option value="II">II</option>
+            <option value="III">III</option>
+        </select>
+
+        <label for="semester">Semester:</label>
+        <select id="semester" name="semester" required>
+            <option value="I">I</option>
+            <option value="II">II</option>
+            <option value="III">III</option>
+            <option value="IV">IV</option>
+            <option value="V">V</option>
+            <option value="VI">VI</option>
+        </select>
+
+        <label for="roll">Roll Number:</label>
+        <input type="number" id="roll" name="roll" placeholder="Enter Roll Number" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" placeholder="Enter Address" required>
+
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="Enter Email Address" required>
+
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword" placeholder="Enter New Password" required>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+
+        <label for="photo">Profile Photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" onchange="previewImage(this)">
+
+        <div id="profile-image-preview"></div>
+
+        <input type="submit" value="Create Profile">
+    </form>
+
+    <div id="profiles-container"></div>
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('profile-image-preview');
+            preview.innerHTML = ''; // Clear previous preview
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.alt = 'Profile Photo Preview';
+                    preview.appendChild(image);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('profile-form');
+            const profilesContainer = document.getElementById('profiles-container');
+            const maxStudents = 50;
+            let studentCount = 0;
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const fullName = form.fullName.value.trim();
+                const gender = form.gender.value;
+                const year = form.year.value;
+                const semester = form.semester.value;
+                const roll = form.roll.value.trim();
+                const address = form.address.value.trim();
+                const email = form.email.value.trim();
+                const newPassword = form.newPassword.value.trim();
+                const confirmPassword = form.confirmPassword.value.trim();
+                const photoInput = form.photo;
+                const photoPreview = document.getElementById('profile-image-preview').innerHTML;
+
+                if (fullName && gender && year && semester && roll && address && email && newPassword && confirmPassword && newPassword === confirmPassword && studentCount < maxStudents) {
+                    const profileDiv = document.createElement('div');
+                    profileDiv.classList.add('profile');
+                    profileDiv.innerHTML = `
+                        <div id="profile-image-preview">
+                            ${photoPreview}
+                        </div>
+                        <h3>${fullName}</h3>
+                        <div class="hidden-data">
+                            <p><strong>Gender:</strong> ${gender}</p>
+                            <p><strong>Year:</strong> ${year}</p>
+                            <p><strong>Semester:</strong> ${semester}</p>
+                            <p><strong>Roll Number:</strong> ${roll}</p>
+                            <p><strong>Address:</strong> ${address}</p>
+                            <p><strong>Email Address:</strong> ${email}</p>
+                        </div>
+                    `;
+                    profilesContainer.appendChild(profileDiv);
+
+                    // Toggle hidden data on click
+                    profileDiv.addEventListener('click', () => {
+                        const hiddenData = profileDiv.querySelector('.hidden-data');
+                        hiddenData.style.display = hiddenData.style.display === 'none' ? 'block' : 'none';
+                    });
+
+                    studentCount++;
+                    form.reset();
+                } else {
+                    alert('Please fill out all fields correctly or maximum student limit reached.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

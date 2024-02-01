@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic Snake and Frog Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        #game-container {
+            position: relative;
+            width: 90vw;
+            height: 90vw;
+            max-width: 400px;
+            max-height: 400px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            gap: 1px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cell {
+            flex: 1;
+            aspect-ratio: 1 / 1;
+            background-color: #e1e1e1;
+            border: 1px solid #fff;
+            box-sizing: border-box;
+        }
+
+        .snake {
+            background-color: #2ecc71;
+            border-radius: 50%; /* Round the snake cells for a more realistic appearance */
+        }
+
+        .frog {
+            background-color: #e74c3c;
+            border-radius: 50%; /* Round the frog cells for a more realistic appearance */
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Realistic Snake and Frog Game</h1>
+
+    <div id="game-container">
+        <div id="game-board"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('game-board');
+            const gridSize = 20;
+            const cells = [];
+
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    board.appendChild(cell);
+                    cells.push(cell);
+                }
+            }
+
+            const snake = [{ row: 0, col: 0 }];
+            let frog = getRandomCell();
+
+            function draw() {
+                cells.forEach(cell => cell.classList.remove('snake', 'frog'));
+
+                snake.forEach(segment => {
+                    const index = segment.row * gridSize + segment.col;
+                    cells[index].classList.add('snake');
+                });
+
+                const frogIndex = frog.row * gridSize + frog.col;
+                cells[frogIndex].classList.add('frog');
+            }
+
+            function getRandomCell() {
+                const randomRow = Math.floor(Math.random() * gridSize);
+                const randomCol = Math.floor(Math.random() * gridSize);
+                return { row: randomRow, col: randomCol };
+            }
+
+            function update() {
+                const head = Object.assign({}, snake[0]);
+
+                switch (direction) {
+                    case 'UP':
+                        head.row--;
+                        break;
+                    case 'DOWN':
+                        head.row++;
+                        break;
+                    case 'LEFT':
+                        head.col--;
+                        break;
+                    case 'RIGHT':
+                        head.col++;
+                        break;
+                }
+
+                if (head.row < 0 || head.row >= gridSize || head.col < 0 || head.col >= gridSize) {
+                    // Game over if the snake hits the wall
+                    resetGame();
+                    return;
+                }
+
+                snake.unshift(head);
+
+                const hasEatenFrog = head.row === frog.row && head.col === frog.col;
+                if (hasEatenFrog) {
+                    frog = getRandomCell();
+                } else {
+                    snake.pop();
+                }
+
+                // Check if the snake collided with itself
+                const collidedWithSelf = snake.some((segment, index) => index !== 0 && segment.row === head.row && segment.col === head.col);
+                if (collidedWithSelf) {
+                    resetGame();
+                    return;
+                }
+
+                draw();
+            }
+
+            function resetGame() {
+                alert('Game Over! Press OK to play again.');
+                snake.length = 1;
+                snake[0] = { row: 0, col: 0 };
+                direction = 'RIGHT';
+                frog = getRandomCell();
+            }
+
+            let direction = 'RIGHT';
+
+            document.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'ArrowUp':
+                        if (direction !== 'DOWN') direction = 'UP';
+                        break;
+                    case 'ArrowDown':
+                        if (direction !== 'UP') direction = 'DOWN';
+                        break;
+                    case 'ArrowLeft':
+                        if (direction !== 'RIGHT') direction = 'LEFT';
+                        break;
+                    case 'ArrowRight':
+                        if (direction !== 'LEFT') direction = 'RIGHT';
+                        break;
+                }
+            });
+
+            setInterval(update, 200); // Adjusted interval for medium speed
+        });
+    </script>
+</body>
+</html>
